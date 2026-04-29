@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  web:
+    image: ashishmondal420/swarm-app:latest
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+    networks:
+      - app-net
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    configs:
+      - source: nginx_conf
+        target: /etc/nginx/conf.d/default.conf
+    deploy:
+      replicas: 1
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: overlay
+
+configs:
+  nginx_conf:
+    external: true
