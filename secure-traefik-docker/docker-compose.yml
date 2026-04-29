@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.9
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.email=your-mimokool2011@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.myresolver.acme.httpChallenge.entryPoint=web"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8082:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./letsencrypt:/letsencrypt"
+    networks:
+      - webnet
+
+  web:
+    build: .
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.web.rule=Host(`ashishdevops.online`)"
+      - "traefik.http.routers.web.entrypoints=websecure"
+      - "traefik.http.routers.web.tls.certresolver=myresolver"
+
+      # 🔐 Basic Auth Middleware (YOUR HASH ADDED)
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$TYHtefn8$$rP/tvtBDmbhtUB5.duNNt1"
+
+      # 🔗 Attach Middleware to Router
+      - "traefik.http.routers.web.middlewares=auth"
+
+    networks:
+      - webnet
+
+networks:
+  webnet:
