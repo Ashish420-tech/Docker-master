@@ -8,11 +8,7 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/Ashish420-tech/Docker-master.git'
-            }
-        }
+
 
         stage('Build') {
             steps {
