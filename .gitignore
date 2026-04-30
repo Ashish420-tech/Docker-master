@@ -3,12 +3,11 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.sqlite3
 
-# Virtual Environment
+# Virtual environments
 venv/
 .env/
-
-# Environment variables
 .env
 
 # Logs
@@ -18,9 +17,27 @@ venv/
 .DS_Store
 Thumbs.db
 
+# IDEs
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+
 # Docker
 *.tar
 
-# IDE
-.vscode/
-.idea/
+# Kubernetes temp
+*.swp
+
+# Node (future-proof)
+node_modules/
+
+# Coverage / test
+.coverage
+htmlcov/
+
+# Misc
+*.bak
+*.tmp
