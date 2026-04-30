@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "myapp"
+        DOCKER_USER = "ashishmondal420"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/Ashish420-tech/Docker-master.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh '''
+                docker build -t $DOCKER_USER/$IMAGE_NAME:latest ./ci-cd-docker-app
+                '''
+            }
+        }
+
+        stage('Push') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh '''
+                    echo $PASS | docker login -u $USER --password-stdin
+                    docker push $DOCKER_USER/$IMAGE_NAME:latest
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy (Local Docker)') {
+            steps {
+                sh '''
+                docker pull $DOCKER_USER/$IMAGE_NAME:latest
+                docker stop myapp || true
+                docker rm myapp || true
+                docker run -d -p 8081:5000 --name myapp $DOCKER_USER/$IMAGE_NAME:latest
+                '''
+            }
+        }
+    }
+}
